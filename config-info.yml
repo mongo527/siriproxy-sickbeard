@@ -1,0 +1,13 @@
+#Example configuration options that can be placed in your main SiriProxy config.yml
+
+##########################
+#NOTICE: Modifying these options in this file has no effect. You must put them in SiriProxy's config.yml!
+##########################
+    
+    - name: 'SickBeard'
+      git: 'git://github.com/mongo527/siriproxy-sickbeard.git'
+      sickbeard_host: '127.0.0.1' # IP of SickBeard Server
+      sickbeard_port: '8081' # Port SickBeard runs on
+      sickbeard_api: 'f52ffc2d75c7eaf5ead61e7ba712c02d' # SickBeard API Key, found at Config > General > API
+      sickbeard_username: '' # Username for SickBeard
+      sickbeard_password: '' # Password for SickBeard
