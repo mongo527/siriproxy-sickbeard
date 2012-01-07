@@ -17,7 +17,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     
     api_url ="http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
     
-    listen_for /search sick beard backlog/i do
+    listen_for /search the backlog/i do
         open("#{api_url}sb.forcesearch") do |f|
             no = 1
             f.each do |line|
@@ -34,18 +34,18 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     listen_for /add new show/i do
-        response = ask "What Show would you like to add?"
+        showName = ask "What Show would you like to add?"
         showID = ""
-        showName = response.gsub(/\s/, "")
+        showName = showName.gsub(/\s/, "")
         open ("#{api_url}sb.searchtvdb&name=#{showName}") do |f|
             no =1
             f.each do |line|
                 if /tvdbid/.match("#{line}")
                     showID = (/[0-9].*/.match("#{line}")).to_s()
-                    say showName + " will be added to SickBeard."
+                    say "#{showName} will be added to SickBeard."
                     break
                 else
-                    say "Sorry, " + showName + " can't be found."
+                    say "Sorry, #{showName} can't be found."
                 end
             end
         end
@@ -53,9 +53,9 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             no = 1
             f.each do |line|
                 if /result.*success/.match("#{line}")
-                    say showName + " has been added to SickBeard."
+                    say "#{showName} has been added to SickBeard."
                 else
-                    say "There was a problem adding " + showName + " to SickBeard."
+                    say "There was a problem adding #{showName} to SickBeard."
                 end
             end
         end
