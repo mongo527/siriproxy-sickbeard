@@ -34,6 +34,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 say "Sickbeard is refreshing the Backlog."
             else
                 say "There was a problem refreshing the Backlog."
+            end
         end
         request_completed
     end
