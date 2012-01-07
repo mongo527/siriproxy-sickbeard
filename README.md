@@ -4,7 +4,7 @@ SiriProxy-SickBeard
 About
 --
 
-Allows you to control SickBeard, the ultimate PVR! (sickbeard.com)
+Allows you to control [SickBeard]: http://sickbeard.com, the ultimate PVR!
 
 Installation
 --
