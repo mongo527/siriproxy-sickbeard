@@ -60,6 +60,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 say "#{showName} will be added to SickBeard."
             else
                 say "Sorry, #{showName} can't be found."
+                break
             end
         end
         open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
