@@ -56,27 +56,28 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                     success = false
                 end
             end
-            if not success
-                say "Sorry, #{showName} can't be found."
-                return
-            end
         end
-        open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
-            no = 1
-            f.each do |line|
-                if /result.*success/.match("#{line}")
-                    success = true
-                    break
-                else
-                    success = false
+        if not success
+            say "Sorry, #{showName} can't be found."
+            return
+            else
+                open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
+                    no = 1
+                    f.each do |line|
+                        if /result.*success/.match("#{line}")
+                            success = true
+                            break
+                        else
+                            success = false
+                        end
+                    end
+                    if success
+                        say "#{showName} has been added to SickBeard."
+                    else
+                        say "There was a problem adding #{showName} to SickBeard."
+                    end
                 end
             end
-            if success
-                say "#{showName} has been added to SickBeard."
-            else
-                say "There was a problem adding #{showName} to SickBeard."
-            end
-        end
         request_completed
     end
 end
