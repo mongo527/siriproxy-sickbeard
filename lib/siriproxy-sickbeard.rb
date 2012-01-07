@@ -43,30 +43,15 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     listen_for /add new show/i do
         response = ask "What Show would you like to add?"
         showID = ""
-        success = ""
-        oneWord = ""
-        if /\S*\s\S.*/.match("#{response}")
-            oneWord = ask "Should #{response} be one word?"
-        end
-        if oneWord == "Yes "
-            showName = response.gsub(/\s/, "")
-        else
-            showName = response.gsub(/\s/, "%20")
-        end
-        open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
-            no =1
-            f.each do |line|
-                if /tvdbid/.match("#{line}")
-                    success = true
-                    showID = (/[0-9].*/.match("#{line}")).to_s()
-                    break
-                else
-                    success = false
-                end
-            end
-        end
-        if not success
-            say "Sorry, #{response} can't be found."
+        
+        #                if /name/.match("#{line}")
+        #            say "#{no}: #{line}", spoken: ""
+        #        end
+        #        numShow = say "Please say the number for the correct show."
+        #    end
+        #    no = 
+            if not tvdbSearch
+                say "Sorry, #{response} can't be found."
             else
                 open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
                     no = 1
@@ -86,5 +71,37 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 end
             end
         request_completed
+    end
+
+#    def getNum(number)
+#        ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"].index(number.downcase)
+        
+#    end
+
+    def tvdbSearch(response)
+        showName = ""
+        oneWord = ""
+        success = ""
+        if /\S*\s\S.*/.match("#{response}")
+            oneWord = ask "Should #{response} be one word?"
+        end
+        if oneWord == "Yes "
+            showName = response.gsub(/\s/, "")
+            else
+            showName = response.gsub(/\s/, "%20")
+        end
+        open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
+            no = 1
+            f.each do |line|
+                if /tvdbid/.match("#{line}")
+                    success = true
+                    showID = (/[0-9].*/.match("#{line}")).to_s()
+                    break
+                else
+                    success = false
+                end
+            end
+            return success
+        end
     end
 end
