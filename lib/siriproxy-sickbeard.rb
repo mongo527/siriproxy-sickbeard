@@ -49,6 +49,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             say "Sorry, #{response} can't be found."
         else
             addShow(showID)
+        end
             
         request_completed
     end
