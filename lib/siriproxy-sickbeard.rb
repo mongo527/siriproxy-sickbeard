@@ -103,7 +103,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                     success = false
                 end
             end
-            return success, showID
+            return showID
         end
     end
 end
