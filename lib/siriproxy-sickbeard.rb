@@ -13,13 +13,9 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         @host = config["sickbeard_host"]
         @port = config["sickbeard_port"]
         @api_key = config["sickbeard_api"]
-        @username = config["sickbeard_username"]
-        @password = config["sickbeard_password"]
     end
     
     api_url = "http://" + @host + ":" + @port + "/api/" + @api_key + "/?cmd="
-    
-    
     
     listen_for /force sickbeard backlog/i do
         open(api_url + "sb.forcesearch") do |f|
