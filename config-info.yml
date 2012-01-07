@@ -9,5 +9,3 @@
       sickbeard_host: '127.0.0.1' # IP of SickBeard Server
       sickbeard_port: '8081' # Port SickBeard runs on
       sickbeard_api: '' # SickBeard API Key, found at Config > General > API
-      sickbeard_username: '' # Username for SickBeard
-      sickbeard_password: '' # Password for SickBeard
