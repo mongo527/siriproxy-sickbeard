@@ -42,34 +42,14 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
 
     listen_for /add new show/i do
         response = ask "What Show would you like to add?"
-        showID = ""
         
-        #                if /name/.match("#{line}")
-        #            say "#{no}: #{line}", spoken: ""
-        #        end
-        #        numShow = say "Please say the number for the correct show."
-        #    end
-        #    no = 
-            if not tvdbSearch(response)
-                say "Sorry, #{response} can't be found."
-            else
-                open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
-                    no = 1
-                    f.each do |line|
-                        if /result.*success/.match("#{line}")
-                            success = true
-                            break
-                        else
-                            success = false
-                        end
-                    end
-                    if success
-                        say "#{response} has been added to SickBeard."
-                    else
-                        say "There was a problem adding #{response} to SickBeard."
-                    end
-                end
-            end
+        showID = tvdbSearch(response)
+        
+        if showID == nil
+            say "Sorry, #{response} can't be found."
+        else
+            addShow(showID)
+            
         request_completed
     end
 
@@ -78,7 +58,28 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         
 #    end
 
+    def addShow(showID)
+        success = ""
+        open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
+            no = 1
+            f.each do |line|
+                if /result.*success/.match("#{line}")
+                    success = true
+                    break
+                else
+                    success = false
+                end
+            end
+            if success
+                say "#{response} has been added to SickBeard."
+            else
+                say "There was a problem adding #{response} to SickBeard."
+            end
+        end
+    end
+
     def tvdbSearch(response)
+        showID = ""
         showName = ""
         oneWord = ""
         success = ""
@@ -101,7 +102,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                     success = false
                 end
             end
-            return success
+            return success, showID
         end
     end
 end
