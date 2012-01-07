@@ -57,6 +57,6 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 end
             end
         end
+        request_completed
     end
-    request_completed
 end
