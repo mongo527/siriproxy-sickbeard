@@ -75,6 +75,19 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         request_completed
     end
 
+    listen_for /add (.+) to my shows/ do |showName|
+        showID = ""
+        showID = tvdbSearch("#{showName}")
+        
+        if not showID
+            say "Sorry, #{showName} can't be found."
+        else
+            addShow(showID, "#{showName}")
+        end
+        
+        request_completed
+    end
+
 #    def getNum(number)
 #        ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"].index(number.downcase)
         
