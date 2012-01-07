@@ -59,7 +59,6 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         end
         if not success
             say "Sorry, #{showName} can't be found."
-            return
             else
                 open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
                     no = 1
