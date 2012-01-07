@@ -48,7 +48,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         if showID == nil
             say "Sorry, #{response} can't be found."
         else
-            addShow(showID)
+            addShow(showID, response)
         end
             
         request_completed
@@ -59,7 +59,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         
 #    end
 
-    def addShow(showID)
+    def addShow(showID, response)
         success = ""
         open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
             no = 1
