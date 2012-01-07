@@ -17,7 +17,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     
     api_url ="http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
     
-    listen_for /search the backlog/i do
+    listen_for /search the back log/i do
         open("#{api_url}sb.forcesearch") do |f|
             no = 1
             f.each do |line|
