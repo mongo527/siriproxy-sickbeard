@@ -18,37 +18,45 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     #    @api_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
     
     listen_for /test sick beard server/i do
-        open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.ping") do |f|
-            f.each do |line|
-                if /result.*success/.match("#{line}")
-                    say "SickBeard is up and running!"
-                elsif /message.*WRONG\sAPI.*/.match("#{line}")
-                    say "API Key given is incorrect. Please fix this in the config file."
+        begin
+            open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.ping") do |f|
+                f.each do |line|
+                    if /result.*success/.match("#{line}")
+                        say "SickBeard is up and running!"
+                    elsif /message.*WRONG\sAPI.*/.match("#{line}")
+                        say "API Key given is incorrect. Please fix this in the config file."
+                    end
                 end
             end
+        rescue Errno::EHOSTUNREACH
+            say "Sorry, I could not connect to your SickBeard Server."
         end
         request_completed
     end
 
     listen_for /search the (back\slog|backlog)/i do
         success=""
-        open("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.forcesearch") do |f|
-            no = 1
-            f.each do |line|
-                if /result.*success/.match("#{line}")
-                    success = true
-                    break
-                else
-                    success = false
+        begin
+            open("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.forcesearch") do |f|
+                no = 1
+                f.each do |line|
+                    if /result.*success/.match("#{line}")
+                        success = true
+                        break
+                    else
+                        success = false
+                    end
+                    no += 1
+                    break if no > 5
                 end
-                no += 1
-                break if no > 5
+                if success
+                    say "SickBeard is refreshing the Backlog."
+                else
+                    say "There was a problem refreshing the Backlog."
+                end
             end
-            if success
-                say "SickBeard is refreshing the Backlog."
-            else
-                say "There was a problem refreshing the Backlog."
-            end
+        rescue Errno::EHOSTUNREACH
+            say "Sorry, I could not connect to your SickBeard Server."
         end
         request_completed
     end
@@ -74,21 +82,25 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
 
     def addShow(showID, response)
         success = ""
-        open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
-            no = 1
-            f.each do |line|
-                if /result.*success/.match("#{line}")
-                    success = true
-                    break
+        begin
+            open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
+                no = 1
+                f.each do |line|
+                    if /result.*success/.match("#{line}")
+                        success = true
+                        break
+                    else
+                        success = false
+                    end
+                end
+                if success
+                    say "#{response} has been added to SickBeard."
                 else
-                    success = false
+                    say "There was a problem adding #{response} to SickBeard."
                 end
             end
-            if success
-                say "#{response} has been added to SickBeard."
-            else
-                say "There was a problem adding #{response} to SickBeard."
-            end
+        rescue Errno::EHOSTUNREACH
+            say "Sorry, I could not connect to your SickBeard Server."
         end
     end
 
@@ -106,18 +118,22 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         else
             showName = response.gsub(/\s/, "%20")
         end
-        open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
-            no = 1
-            f.each do |line|
-                if /tvdbid/.match("#{line}")
-                    success = true
-                    showID = (/[0-9].*/.match("#{line}")).to_s()
-                    break
-                else
-                    success = false
+        begin
+            open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
+                no = 1
+                f.each do |line|
+                    if /tvdbid/.match("#{line}")
+                        success = true
+                        showID = (/[0-9].*/.match("#{line}")).to_s()
+                        break
+                    else
+                        success = false
+                    end
                 end
+                return showID
             end
-            return showID
+        rescue Errno::EHOSTUNREACH
+            say "Sorry, I could not connect to your SickBeard Server."
         end
     end
 end
