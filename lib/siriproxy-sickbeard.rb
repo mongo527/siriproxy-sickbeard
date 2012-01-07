@@ -44,7 +44,15 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         response = ask "What Show would you like to add?"
         showID = ""
         success = ""
-        showName = response.gsub(/\s/, "%20")
+        oneWord = ""
+        if /\S*\s\S.*/.match("#{response}")
+            oneWord = ask "Should #{response} be one word?"
+        end
+        if oneWord == "Yes "
+            showName = response.gsub(/\s/, "")
+        else
+            showName = response.gsub(/\s/, "%20")
+        end
         open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
             no =1
             f.each do |line|
