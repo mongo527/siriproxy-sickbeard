@@ -50,7 +50,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         #        numShow = say "Please say the number for the correct show."
         #    end
         #    no = 
-            if not tvdbSearch
+            if not tvdbSearch(response)
                 say "Sorry, #{response} can't be found."
             else
                 open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
@@ -87,7 +87,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         end
         if oneWord == "Yes "
             showName = response.gsub(/\s/, "")
-            else
+        else
             showName = response.gsub(/\s/, "%20")
         end
         open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
