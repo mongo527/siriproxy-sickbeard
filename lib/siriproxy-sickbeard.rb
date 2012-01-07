@@ -45,7 +45,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 break if no > 5
             end
             if success
-                say "Sickbeard is refreshing the Backlog."
+                say "SickBeard is refreshing the Backlog."
             else
                 say "There was a problem refreshing the Backlog."
             end
