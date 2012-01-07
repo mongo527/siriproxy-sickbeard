@@ -31,8 +31,11 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 else
                     say "There was a problem refreshing the Backlog."
                 end
+                no += 1
+                break if no > 5
             end
         end
+        request_completed
     end
 
     listen_for /add new show/i do
@@ -44,6 +47,8 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 if /tvdbid/.match("#{line}")
                     showID = (/[0-9].*/.match("#{line}")).to_s()
                     say showName + " will be added to SickBeard."
+                else
+                    say "Sorry, " + showName + " can't be found."
                 end
             end
         end
@@ -58,4 +63,5 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             end
         end
     end
+    request_completed
 end
