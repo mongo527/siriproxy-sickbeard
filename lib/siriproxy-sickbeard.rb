@@ -15,14 +15,15 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         @api_key = config["sickbeard_api"]
     end
     
-    api_url ="http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
-    
+    @api_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
+
     listen_for /search the back log/i do
-        open("#{api_url}sb.forcesearch") do |f|
+        open("#{@api_url}sb.forcesearch") do |f|
             no = 1
             f.each do |line|
                 if /result.*success/.match("#{line}")
                     say "SickBeard is refreshing the Backlog."
+                    break
                 else
                     say "There was a problem refreshing the Backlog."
                 end
@@ -37,7 +38,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         showName = ask "What Show would you like to add?"
         showID = ""
         showName = showName.gsub(/\s/, "")
-        open ("#{api_url}sb.searchtvdb&name=#{showName}") do |f|
+        open ("#{@api_url}sb.searchtvdb&name=#{showName}") do |f|
             no =1
             f.each do |line|
                 if /tvdbid/.match("#{line}")
@@ -49,7 +50,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 end
             end
         end
-        open ("#{api_url}show.addnew&tvdbid=#{showID}") do |f|
+        open ("#{@api_url}show.addnew&tvdbid=#{showID}") do |f|
             no = 1
             f.each do |line|
                 if /result.*success/.match("#{line}")
