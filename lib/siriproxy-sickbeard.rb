@@ -27,6 +27,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 end
             end
         end
+        request_completed
     end
 
     listen_for /search the (back\slog|backlog)/i do
