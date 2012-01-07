@@ -16,6 +16,18 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
     
     #    @api_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
+    
+    listen_for /test sick beard server/i do
+        open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.ping") do |f|
+            f.each do |line|
+                if /result.*success/.match("#{line}")
+                    say "SickBeard is up and running!"
+                elsif /message.*WRONG\sAPI.*/.match("#{line}")
+                    say "API Key given is incorrect. Please fix this in the config file."
+                end
+            end
+        end
+    end
 
     listen_for /search the (back\slog|backlog)/i do
         success=""
@@ -87,8 +99,9 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         if /\S*\s\S.*/.match("#{response}")
             oneWord = ask "Should #{response} be one word?"
         end
-        if oneWord == "Yes "
+        if /(yes|yeah|yup) (.+)/.match(oneWord)
             showName = response.gsub(/\s/, "")
+            response = showName
         else
             showName = response.gsub(/\s/, "%20")
         end
