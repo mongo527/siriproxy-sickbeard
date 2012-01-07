@@ -45,6 +45,6 @@ Thanks!
 Credits
 --
 
-Thanks to Plamoni and Westbaer for SiriProxy.
+Thanks to [Plamoni](https://github.com/plamoni/SiriProxy) and [Westbaer](https://github.com/westbaer/SiriProxy) for SiriProxy.
 
 You are free to use, modify, and redistribute the SiriProxy-SickBeard gem as long as proper credit is given to.
