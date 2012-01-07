@@ -45,7 +45,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         
         showID = tvdbSearch(response)
         
-        if showID == nil
+        if not showID
             say "Sorry, #{response} can't be found."
         else
             addShow(showID, response)
