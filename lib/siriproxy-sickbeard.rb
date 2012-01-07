@@ -4,7 +4,7 @@ require 'open-uri'
 
 #############
 # This is a plugin for SiriProxy that will allow you to control SickBeard.
-# Example usage: "force sickbeard backlog."
+# Example usage: "search sick beard backlog."
 #############
 
 class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
@@ -17,8 +17,8 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     
     api_url ="http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
     
-    listen_for /force sickbeard backlog/i do
-        open(api_url + "sb.forcesearch") do |f|
+    listen_for /search sick beard backlog/i do
+        open("#{api_url}sb.forcesearch") do |f|
             no = 1
             f.each do |line|
                 if /result.*success/.match("#{line}")
@@ -36,7 +36,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     listen_for /add new show/i do
         showName = ask "What Show would you like to add?"
         showID = ""
-        open (api_url + "sb.searchtvdb&name=" + showName) do |f|
+        open ("#{api_url}sb.searchtvdb&name=#{showName}") do |f|
             no =1
             f.each do |line|
                 if /tvdbid/.match("#{line}")
@@ -47,7 +47,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 end
             end
         end
-        open (api_url + "show.addnew&tvdbid=" + showID) do |f|
+        open ("#{api_url}show.addnew&tvdbid=#{showID}") do |f|
             no = 1
             f.each do |line|
                 if /result.*success/.match("#{line}")
