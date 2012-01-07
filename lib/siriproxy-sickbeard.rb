@@ -56,11 +56,9 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                     success = false
                 end
             end
-            if success
-                say "#{showName} will be added to SickBeard."
-            else
+            if not success
                 say "Sorry, #{showName} can't be found."
-                break
+                return
             end
         end
         open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
