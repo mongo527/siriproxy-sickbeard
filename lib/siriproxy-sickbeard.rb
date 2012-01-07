@@ -43,28 +43,39 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     listen_for /add new show/i do
         showName = ask "What Show would you like to add?"
         showID = ""
+        success = ""
         showName = showName.gsub(/\s/, "")
         open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
             no =1
             f.each do |line|
                 if /tvdbid/.match("#{line}")
+                    success = true
                     showID = (/[0-9].*/.match("#{line}")).to_s()
-                    say "#{showName} will be added to SickBeard."
                     break
                 else
-                    say "Sorry, #{showName} can't be found."
+                    success = false
                 end
+            end
+            if success
+                say "#{showName} will be added to SickBeard."
+            else
+                say "Sorry, #{showName} can't be found."
             end
         end
         open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
             no = 1
             f.each do |line|
                 if /result.*success/.match("#{line}")
-                    say "#{showName} has been added to SickBeard."
+                    success = true
                     break
                 else
-                    say "There was a problem adding #{showName} to SickBeard."
+                    success = false
                 end
+            end
+            if success
+                say "#{showName} has been added to SickBeard."
+            else
+                say "There was a problem adding #{showName} to SickBeard."
             end
         end
         request_completed
