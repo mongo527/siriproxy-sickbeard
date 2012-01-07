@@ -20,6 +20,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     listen_for /search the back log/i do |phrase|
         say "working before uri open"
         open("#{@api_url}sb.forcesearch") do |f|
+        say "working after uri"
             no = 1
             f.each do |line|
                 if /result.*success/.match("#{line}")
