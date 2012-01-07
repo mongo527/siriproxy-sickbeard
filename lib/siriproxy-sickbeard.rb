@@ -36,12 +36,14 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     listen_for /add new show/i do
         showName = ask "What Show would you like to add?"
         showID = ""
+        #        showName = response.gsub(//, "%20")
         open ("#{api_url}sb.searchtvdb&name=#{showName}") do |f|
             no =1
             f.each do |line|
                 if /tvdbid/.match("#{line}")
                     showID = (/[0-9].*/.match("#{line}")).to_s()
                     say showName + " will be added to SickBeard."
+                    break
                 else
                     say "Sorry, " + showName + " can't be found."
                 end
