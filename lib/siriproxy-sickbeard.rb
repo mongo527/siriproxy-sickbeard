@@ -34,9 +34,9 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     listen_for /add new show/i do
-        showName = ask "What Show would you like to add?"
+        response = ask "What Show would you like to add?"
         showID = ""
-        #        showName = response.gsub(//, "%20")
+        showName = response.gsub(//, "%20")
         open ("#{api_url}sb.searchtvdb&name=#{showName}") do |f|
             no =1
             f.each do |line|
