@@ -1,11 +1,10 @@
 require 'cora'
 require 'siri_objects'
 require 'open-uri'
-require 'regexp'
 
 #############
 # This is a plugin for SiriProxy that will allow you to control SickBeard.
-# Example usage: "search sickbeard backlog."
+# Example usage: "force sickbeard backlog."
 #############
 
 class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
