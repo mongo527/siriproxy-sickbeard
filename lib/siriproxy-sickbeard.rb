@@ -15,23 +15,25 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         @api_key = config["sickbeard_api"]
     end
     
-    @api_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
+    #    @api_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
 
     listen_for /search the (back\slog|backlog)/i do
-        say "working before uri open"
         open("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.forcesearch") do |f|
-        say "working after uri"
             no = 1
             f.each do |line|
                 if /result.*success/.match("#{line}")
-                    say "SickBeard is refreshing the Backlog."
+                    success = true
                     break
                 else
-                    say "There was a problem refreshing the Backlog."
+                    success = false
                 end
                 no += 1
                 break if no > 5
             end
+            if success
+                say "Sickbeard is refreshing the Backlog."
+            else
+                say "There was a problem refreshing the Backlog."
         end
         request_completed
     end
@@ -40,7 +42,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         showName = ask "What Show would you like to add?"
         showID = ""
         showName = showName.gsub(/\s/, "")
-        open ("#{@api_url}sb.searchtvdb&name=#{showName}") do |f|
+        open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
             no =1
             f.each do |line|
                 if /tvdbid/.match("#{line}")
@@ -52,11 +54,12 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 end
             end
         end
-        open ("#{@api_url}show.addnew&tvdbid=#{showID}") do |f|
+        open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
             no = 1
             f.each do |line|
                 if /result.*success/.match("#{line}")
                     say "#{showName} has been added to SickBeard."
+                    break
                 else
                     say "There was a problem adding #{showName} to SickBeard."
                 end
