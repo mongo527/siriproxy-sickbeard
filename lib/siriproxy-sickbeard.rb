@@ -17,9 +17,9 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     
     @api_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
 
-    listen_for /search the back log/i do
+    listen_for /search the (back\slog|backlog)/i do
         say "working before uri open"
-        open("#{@api_url}sb.forcesearch") do |f|
+        open("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.forcesearch") do |f|
         say "working after uri"
             no = 1
             f.each do |line|
