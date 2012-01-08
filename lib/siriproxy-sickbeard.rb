@@ -31,7 +31,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         rescue Errno::EHOSTUNREACH
             say "Sorry, I could not connect to your SickBeard Server."
         rescue Errno::ECONNREFUSED
-            say "Sorry, Server is not running."
+            say "Sorry, SickBeard is not running."
         end
         request_completed
     end
