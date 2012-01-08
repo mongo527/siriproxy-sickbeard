@@ -17,7 +17,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     
     #    @api_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
     
-    listen_for /test sick beard server/i do
+    listen_for /test (sick beard|my show|my shows) server/i do
         begin
             open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.ping") do |f|
                 f.each do |line|
@@ -99,7 +99,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     def oneWord(response)
         single = ""
         if /\S*\s\S.*/.match("#{response}")
-            single = ask "Should #{response}be one word?"
+            single = ask "Should #{response} be one word?"
         end
         if /(Yes|Yeah|Yup)(.*)/.match(single)
             showName = response.gsub(/\s/, "")
