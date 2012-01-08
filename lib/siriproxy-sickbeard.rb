@@ -75,7 +75,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         request_completed
     end
 
-    listen_for /add (.+) to my shows/ do |showName|
+    listen_for /add (.*)\sto\smy\sshows/ do |showName|
         showID = ""
         showID = tvdbSearch("#{showName}")
         
