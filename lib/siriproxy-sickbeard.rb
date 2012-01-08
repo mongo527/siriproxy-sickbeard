@@ -183,12 +183,4 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         end
         return
     end
-=begin                    if /tvdbid/.match("#{line}")
- success = true
- showID = (/[0-9].*/.match("#{line}")).to_s()
- break
- else
- success = false
- end
- =end
 end
