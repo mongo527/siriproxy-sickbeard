@@ -152,7 +152,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
                 no = 1
                 f.each do |line|
-                    Shalom
+                    
                     if /tvdbid/.match("#{line}")
                         success = true
                         showID = (/[0-9].*/.match("#{line}")).to_s()
