@@ -94,7 +94,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     def getNum(number)
-        ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"].index(number.downcase)
+        return ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"].index(number.downcase)
         
     end
 
