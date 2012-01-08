@@ -125,15 +125,15 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 end
                 if /%20/.match(response)
                     if success
-                        say "#{showName} has been added to SickBeard."
+                        say "#{showSpaces} has been added to SickBeard."
                     else
-                        say "There was a problem adding #{showName} to SickBeard."
+                        say "There was a problem adding #{showSpaces} to SickBeard."
                     end
                 else
                     if success
                         say "#{response} has been added to SickBeard."
                     else
-                        say "There was a problem adding #{showName} to SickBeard."
+                        say "There was a problem adding #{response} to SickBeard."
                     end
                 end
             end
