@@ -144,45 +144,35 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         end
     end
 
-    def tvdbSearch(showName)
-        showNameList = Array.new
-        showID = ""
+    def addShow(showID, response, showSpaces)
         success = ""
-        count = 0
-        
         begin
-            open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
+            open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
+                no = 1
                 f.each do |line|
-                    if /name/.match("#{line}")
-                        nameLine = "#{line}".gsub(/""*\\*\,*/, "").strip
-                        showNameList.push(nameLine)
-                        count += 1
-                    end
-                    break if count > 3
-                end
-                if count == 1
-                    if /tvdbid/.match(showNameList[count-1])
+                    if /result.*success/.match("#{line}")
                         success = true
-                        showID = (/[0-9].*/.match(showNameList[count-1])).to_s()
                         break
-                    else
+                        else
                         success = false
                     end
-                elsif count > 1
-                    showNameList.each do |numShow|
-                        say "#{showNameList.index(numShow)}: #{numShow}", spoken: ""
-                    end
-                    numWordResponse = ask "Please state the number of the show you would like to add."
-                    numResponse = getNum(numWordResponse)
-                    say "You selected #{numResponse}. Is this correct?"
                 end
-                    
-                    
-                return showID
+                if /%20/.match(response)
+                    if success
+                        say "#{showSpaces} has been added to SickBeard."
+                        else
+                        say "There was a problem adding #{showSpaces} to SickBeard."
+                    end
+                    else
+                    if success
+                        say "#{response} has been added to SickBeard."
+                        else
+                        say "There was a problem adding #{response} to SickBeard."
+                    end
+                end
             end
-        rescue Errno::EHOSTUNREACH
+            rescue Errno::EHOSTUNREACH
             say "Sorry, I could not connect to your SickBeard Server."
         end
-        return
     end
 end
