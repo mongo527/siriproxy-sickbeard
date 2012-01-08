@@ -169,8 +169,8 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                         success = false
                     end
                 elsif count > 1
-                    count.each do |numShow|
-                        say "#{count.index(numShow)}: #{numShow}", spoken: ""
+                    showNameList.each do |numShow|
+                        say "#{showNameList.index(numShow)}: #{numShow}", spoken: ""
                     end
                     showID = ask "Please state the number of the show you would like to add."
                 end
