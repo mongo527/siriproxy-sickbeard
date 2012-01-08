@@ -93,10 +93,10 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         request_completed
     end
 
-#    def getNum(number)
-#        ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"].index(number.downcase)
+    def getNum(number)
+        ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"].index(number.downcase)
         
-#    end
+    end
 
     def oneWord(response)
         single = ""
@@ -172,7 +172,9 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                     showNameList.each do |numShow|
                         say "#{showNameList.index(numShow)}: #{numShow}", spoken: ""
                     end
-                    showID = ask "Please state the number of the show you would like to add."
+                    numWordResponse = ask "Please state the number of the show you would like to add."
+                    numResponse = getNum(numWordResponse)
+                    say "You selected #{numResponse}. Is this correct?"
                 end
                     
                     
