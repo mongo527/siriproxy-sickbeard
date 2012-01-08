@@ -163,36 +163,24 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 if count == 1
                     if /tvdbid/.match(showNameList[count-1])
                         success = true
-                        showID = (/[0-9].*/.match(showNameList[count-1])
+                        showID = (/[0-9].*/.match(showNameList[count-1])).to_s()
                         break
-                    else
+                        else
                         success = false
                     end
-                elsif count > 1
-                    count.each do |numShow|
-                        say "#{count.index(numShow)}: #{numShow}", spoken: ""
+                    elsif count > 1
+                    showNameList.each do |numShow|
+                        say "#{showNameList.index(numShow)}: #{numShow}", spoken: ""
                     end
-                    showID = ask "Please state the number of the show you would like to add."
+                    numWordResponse = ask "Please state the number of the show you would like to add."
+                    numResponse = getNum(numWordResponse)
+                    say "You selected #{numResponse}. Is this correct?"
                 end
-                    
-                    
                 return showID
             end
-        rescue Errno::EHOSTUNREACH
+            rescue Errno::EHOSTUNREACH
             say "Sorry, I could not connect to your SickBeard Server."
         end
         return
     end
 end
-
-
-
-
-=begin                    if /tvdbid/.match("#{line}")
- success = true
- showID = (/[0-9].*/.match("#{line}")).to_s()
- break
- else
- success = false
- end
- =end
