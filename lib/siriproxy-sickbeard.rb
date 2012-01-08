@@ -110,7 +110,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         end
         
         return showName
-    end
+    end            
 
     def addShow(showID, response, showSpaces)
         success = ""
