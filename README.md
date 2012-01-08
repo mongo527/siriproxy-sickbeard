@@ -31,9 +31,12 @@ Installation
 Voice Commands
 --
 
-+ test sick beard server
++ test sick beard server OR test my shows server
 + search the back log
 + add new show
++ add *show* to my shows
+
++ In my experience Siri has a problem when I say Sick Beard. So I instead say my shows.
 
 Notes
 --
