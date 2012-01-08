@@ -145,26 +145,52 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     def tvdbSearch(showName)
+        showNameList = Array.new
         showID = ""
         success = ""
+        count = 0
         
         begin
             open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
-                no = 1
                 f.each do |line|
-                    
-                    if /tvdbid/.match("#{line}")
+                    if /name/.match("#{line}")
+                        nameLine = "#{line}".gsub(/""*\\*\,*/, "").strip
+                        showNameList.push(nameLine)
+                        count += 1
+                    end
+                    break if count > 3
+                end
+                if count == 1
+                    if /tvdbid/.match(showNameList[count-1])
                         success = true
-                        showID = (/[0-9].*/.match("#{line}")).to_s()
+                        showID = (/[0-9].*/.match(showNameList[count-1])
                         break
                     else
                         success = false
+                elsif count > 1
+                    count.each do |numShow|
+                        say "#{count.index(numShow)}: #{numShow}", spoken: ""
                     end
-                end
+                    showID = ask "Please state the number of the show you would like to add."
+                    
+                    
                 return showID
             end
         rescue Errno::EHOSTUNREACH
             say "Sorry, I could not connect to your SickBeard Server."
         end
+        return
     end
 end
+
+
+
+
+=begin                    if /tvdbid/.match("#{line}")
+ success = true
+ showID = (/[0-9].*/.match("#{line}")).to_s()
+ break
+ else
+ success = false
+ end
+ =end
