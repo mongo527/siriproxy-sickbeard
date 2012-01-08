@@ -64,20 +64,23 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     listen_for /add new show/i do
         response = ask "What Show would you like to add?"
         
-        showID = tvdbSearch(response)
+        showName = oneWord(response)
+        showID = tvdbSearch(showName)
         
         if not showID
-            say "Sorry, #{response} can't be found."
+            say "Sorry, #{showName} can't be found."
         else
-            addShow(showID, response)
+            addShow(showID, showName)
         end
             
         request_completed
     end
 
-    listen_for /add (.*) to my shows/i do |showName|
+    listen_for /add (.*) to my shows/i do |response|
         showID = ""
-        showID = tvdbSearch("#{showName}")
+        
+        showName = oneWord("#{response}")
+        showID = tvdbSearch(showName)
         
         if not showID
             say "Sorry, #{showName} can't be found."
@@ -92,6 +95,19 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
 #        ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"].index(number.downcase)
         
 #    end
+
+    def oneWord(response)
+        if /\S*\s\S.*/.match("#{response}")
+            oneWord = ask "Should #{response} be one word?"
+        end
+        if /(yes|yeah|yup) (.+)/.match(oneWord)
+            showName = response.gsub(/\s/, "")
+        else
+            showName = response.gsub(/\s/, "%20")
+        end
+        
+        return showName
+    end
 
     def addShow(showID, response)
         success = ""
@@ -117,20 +133,10 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         end
     end
 
-    def tvdbSearch(response)
+    def tvdbSearch(showName)
         showID = ""
-        showName = ""
-        oneWord = ""
         success = ""
-        if /\S*\s\S.*/.match("#{response}")
-            oneWord = ask "Should #{response} be one word?"
-        end
-        if /(yes|yeah|yup) (.+)/.match(oneWord)
-            showName = response.gsub(/\s/, "")
-            response = showName
-        else
-            showName = response.gsub(/\s/, "%20")
-        end
+        
         begin
             open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
                 no = 1
