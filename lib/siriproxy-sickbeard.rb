@@ -70,7 +70,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         if not showID
             say "Sorry, #{showName} can't be found."
         else
-            addShow(showID, showName)
+            addShow(showID, showName, response)
         end
             
         request_completed
@@ -85,7 +85,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         if not showID
             say "Sorry, #{showName} can't be found."
         else
-            addShow(showID, "#{showName}")
+            addShow(showID, "#{showName}", response)
         end
         
         request_completed
@@ -99,7 +99,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     def oneWord(response)
         single = ""
         if /\S*\s\S.*/.match("#{response}")
-            single = ask "Should #{response} be one word?"
+            single = ask "Should #{response}be one word?"
         end
         if /(Yes|Yeah|Yup)(.*)/.match(single)
             showName = response.gsub(/\s/, "")
@@ -110,7 +110,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         return showName
     end
 
-    def addShow(showID, response)
+    def addShow(showID, response, showSpaces)
         success = ""
         begin
             open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
@@ -123,10 +123,18 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                         success = false
                     end
                 end
-                if success
-                    say "#{response} has been added to SickBeard."
+                if /%20/.match(response)
+                    if success
+                        say "#{showName} has been added to SickBeard."
+                    else
+                        say "There was a problem adding #{showName} to SickBeard."
+                    end
                 else
-                    say "There was a problem adding #{response} to SickBeard."
+                    if success
+                        say "#{response} has been added to SickBeard."
+                    else
+                        say "There was a problem adding #{showName} to SickBeard."
+                    end
                 end
             end
         rescue Errno::EHOSTUNREACH
