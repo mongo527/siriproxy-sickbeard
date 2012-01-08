@@ -163,7 +163,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 if count == 1
                     if /tvdbid/.match(showNameList[count-1])
                         success = true
-                        showID = (/[0-9].*/.match(showNameList[count-1])
+                        showID = (/[0-9].*/.match(showNameList[count-1])).to_s()
                         break
                     else
                         success = false
