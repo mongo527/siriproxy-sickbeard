@@ -98,9 +98,9 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
 
     def oneWord(response)
         if /\S*\s\S.*/.match("#{response}")
-            oneWord = ask "Should #{response} be one word?"
+            single = ask "Should #{response} be one word?"
         end
-        if /(yes|yeah|yup) (.+)/.match(oneWord)
+        if /(yes|yeah|yup) (.+)/.match(single)
             showName = response.gsub(/\s/, "")
         else
             showName = response.gsub(/\s/, "%20")
