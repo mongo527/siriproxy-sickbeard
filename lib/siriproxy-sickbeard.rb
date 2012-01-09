@@ -107,7 +107,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             'nine' => 9,
             'ten' => 10
         }
-        return numbers[strNum] || strNum.to_i
+        return numbers[strNum].index(strNum.downcase)
     end
 
     def oneWord(response)
