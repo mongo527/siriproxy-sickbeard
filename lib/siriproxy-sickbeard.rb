@@ -146,7 +146,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
 
     def tvdbSearch(showName)
         showNameList = Array.new
-        showIDList = Array.net
+        showIDList = Array.new
         showID = ""
         success = ""
         count = 0
