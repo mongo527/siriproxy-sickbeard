@@ -163,7 +163,6 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     def tvdbSearch(showName)
         showNameList = Array.new
         showIDList = Array.new
-        showID = ""
         success = ""
         count = 0
         
@@ -171,7 +170,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
                 f.each do |line|
                     if /name/.match("#{line}")
-                        nameLine = "#{line}".gsub(/^(.+) \-\s $/, "").strip
+                        nameLine = "#{line}".gsub(//, "").strip
                         showNameList.push(nameLine)
                         count += 1
                     end
