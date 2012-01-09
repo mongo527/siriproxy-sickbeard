@@ -108,8 +108,6 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         }
         return numbers[str] || str.to_i
     end
-        
-    end
 
     def oneWord(response)
         single = ""
