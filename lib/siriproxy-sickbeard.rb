@@ -94,7 +94,20 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     def getNum(number)
-        ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"].index(number.downcase)
+        numbers = {
+            'one' => 1,
+            'two' => 2,
+            'three' => 3,
+            'four' => 4,
+            'five' => 5,
+            'six' => 6,
+            'seven' => 7,
+            'eight' => 8,
+            'nine' => 9,
+            'ten' => 10
+        }
+        return numbers[str] || str.to_i
+    end
         
     end
 
