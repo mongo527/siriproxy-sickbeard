@@ -94,11 +94,21 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     def getNum(strNum)
-        numbers = Array.new
-        
-        numbers["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
-        
-        return numbers.index(strNum.downcase)
+        if strNum.match("one ")
+            return 1
+        end
+        if strNum.match("two ")
+            return 2
+        end
+        if strNum.match("three ")
+            return 3
+        end
+        if strNum.match("four ")
+            return 4
+        end
+        if strNum.match("five ")
+            return 5
+        end
     end
 
     def oneWord(response)
