@@ -107,7 +107,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             'nine' => 9,
             'ten' => 10
         }
-        return numbers[strNum].index(strNum.downcase)
+        return numbers.index(strNum)
     end
 
     def oneWord(response)
@@ -167,7 +167,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
                 f.each do |line|
                     if /name/.match("#{line}")
-                        nameLine = "#{line}".gsub(/""*\\*\,*/, "").strip
+                        nameLine = "#{line}".gsub(/name:""*\\*\,*/, "").strip
                         showNameList.push(nameLine)
                         count += 1
                     end
