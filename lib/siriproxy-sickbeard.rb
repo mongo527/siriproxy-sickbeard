@@ -146,6 +146,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
 
     def tvdbSearch(showName)
         showNameList = Array.new
+        showIDList = Array.net
         showID = ""
         success = ""
         count = 0
@@ -160,7 +161,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                     end
                     if /tvdbid/.match("#{line}")
                         showID = (/[0-9].*/.match("#{line}")).to_s()
-                        showNameList.push(showID)
+                        showIDList.push(showID)
                         success = true
                     else
                         success = false
