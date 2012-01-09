@@ -94,7 +94,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     def getNum(number)
-        return ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"].index(number.downcase)
+        ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"].index(number.downcase)
         
     end
 
@@ -144,35 +144,47 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         end
     end
 
-    def addShow(showID, response, showSpaces)
+    def tvdbSearch(showName)
+        showNameList = Array.new
+        showID = ""
         success = ""
+        count = 0
+        
         begin
-            open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
-                no = 1
+            open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
                 f.each do |line|
-                    if /result.*success/.match("#{line}")
+                    if /name/.match("#{line}")
+                        nameLine = "#{line}".gsub(/""*\\*\,*/, "").strip
+                        showNameList.push(nameLine)
+                        count += 1
+                    end
+                    if /tvdbid/.match("#{line}")
+                        showID = (/[0-9].*/.match("#{line}")).to_s()
+                        showNameList.push(showID)
                         success = true
-                        break
-                        else
+                    else
                         success = false
                     end
+                    break if count > 3
                 end
-                if /%20/.match(response)
-                    if success
-                        say "#{showSpaces} has been added to SickBeard."
-                        else
-                        say "There was a problem adding #{showSpaces} to SickBeard."
+                if count == 1
+                    return showNameList[1]
+                    
+                elsif count > 1
+                    showNameList.each do |numShow|
+                        say "#{showNameList.index(numShow)}: #{numShow}", spoken: ""
                     end
-                    else
-                    if success
-                        say "#{response} has been added to SickBeard."
-                        else
-                        say "There was a problem adding #{response} to SickBeard."
-                    end
+                    numWordResponse = ask "Please state the number of the show you would like to add."
+                    numResponse = getNum(numWordResponse)
+                    say "You selected #{numResponse}. Is this correct?"
                 end
+                    
+                    
+                return showID
             end
-            rescue Errno::EHOSTUNREACH
+        rescue Errno::EHOSTUNREACH
             say "Sorry, I could not connect to your SickBeard Server."
         end
+        return
     end
 end
