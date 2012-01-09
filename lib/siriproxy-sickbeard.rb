@@ -182,7 +182,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                     break if count > 3
                 end
                 if count == 1
-                    return showNameList[1]
+                    return showIDList[0]
                     
                 elsif count > 1
                     showNameList.each do |numShow|
@@ -190,11 +190,8 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                     end
                     numWordResponse = ask "Please state the number of the show you would like to add."
                     numResponse = getNum(numWordResponse.downcase)
-                    say "You selected #{numResponse}. Is this correct?"
+                    return showIDList[numResponse]
                 end
-                    
-                    
-                return showID
             end
         rescue Errno::EHOSTUNREACH
             say "Sorry, I could not connect to your SickBeard Server."
