@@ -189,7 +189,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                         say "#{showNameList.index(numShow)}: #{numShow}", spoken: ""
                     end
                     numWordResponse = ask "Please state the number of the show you would like to add."
-                    numResponse = getNum(numWordResponse)
+                    numResponse = getNum(numWordResponse.downcase)
                     say "You selected #{numResponse}. Is this correct?"
                 end
                     
