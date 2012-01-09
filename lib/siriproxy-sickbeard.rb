@@ -93,7 +93,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         request_completed
     end
 
-    def getNum(number)
+    def getNum(strNum)
         numbers = {
             'one' => 1,
             'two' => 2,
@@ -106,7 +106,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             'nine' => 9,
             'ten' => 10
         }
-        return numbers[str] || str.to_i
+        return numbers[strNum] || strNum.to_i
     end
 
     def oneWord(response)
