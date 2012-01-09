@@ -171,7 +171,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
                 f.each do |line|
                     if /name/.match("#{line}")
-                        nameLine = "#{line}".gsub(/^(.+) \-\s /, "").strip
+                        nameLine = "#{line}".gsub(/^(.+) \-\s $/, "").strip
                         showNameList.push(nameLine)
                         count += 1
                     end
