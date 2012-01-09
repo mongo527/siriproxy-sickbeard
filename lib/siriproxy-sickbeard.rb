@@ -95,6 +95,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
 
     def getNum(strNum)
         numbers = {
+            'zero' => 0,
             'one' => 1,
             'two' => 2,
             'three' => 3,
