@@ -103,6 +103,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             
             if /\S*\s*\S*/.match(definition)
                 definition = definition.gsub(/\S*\s*\S*/, "")
+                say "You chose #{definition}."
             end
             
             return definition
