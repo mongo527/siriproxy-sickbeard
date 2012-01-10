@@ -73,7 +73,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         if not showIDName[0]
             say "Sorry, #{showName} can't be found."
         else
-            addShow(showIDName[0], showIDName[1], definition)
+            addShow(showIDName[0], showIDName[1], showDef)
         end
             
         request_completed
@@ -83,12 +83,13 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         showID = ""
         
         showName = oneWord("#{response}")
-        showID = tvdbSearch(showName)
+        showIDName = tvdbSearch(showName)
+        showDef = changeDef()
         
         if not showID
             say "Sorry, #{showName} can't be found."
         else
-            addShow(showIDName[0], showIDName[1], definition)
+            addShow(showIDName[0], showIDName[1], showDef)
         end
         
         request_completed
@@ -202,7 +203,8 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                         say "#{showNameList.index(numShow)}: #{numShow}", spoken: ""
                     end
                     numWordResponse = ask "Please state the number of the show you would like to add."
-                    numResponse = getNum(numWordResponse.downcase) + 1
+                    numResponse = getNum(numWordResponse.downcase)
+                    numResponse += 1
                     return showIDList[numResponse-1], showNameList[numResponse-1]
                 end
             end
