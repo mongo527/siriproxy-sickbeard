@@ -103,7 +103,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         
         definition = definition.gsub(/\s/, "")
             
-        return definition
+        return definition.downcase
         
         else
             return
