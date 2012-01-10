@@ -182,7 +182,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 f.each do |line|
                     if /name/.match("#{line}")
                         nameLineArray = "#{line}".split(/":\s"/)
-                        nameLine = nameLineArray[1].gsub(/'$/, "").strip
+                        nameLine = nameLineArray[1].gsub(/",$/, "").strip
                         showNameList.push(nameLine)
                         count += 1
                     end
