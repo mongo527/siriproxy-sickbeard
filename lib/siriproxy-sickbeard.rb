@@ -66,19 +66,20 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     listen_for /add new show/i do
         response = ask "What Show would you like to add?"
         
-        showName = oneWord(response)
-        showID = tvdbSearch(showName)
+        showName = oneWord(response)        
+        showIDName = tvdbSearch(showName)
+        showDef = changeDef()
         
         if not showID
             say "Sorry, #{showName} can't be found."
         else
-            addShow(showID, showName, response)
+            addShow(showIDName[0], showIDName[1], definition)
         end
             
         request_completed
     end
 
-    listen_for /add (.*) to my shows/i do |response|
+    listen_for /add (.+) to my shows/i do |response|
         showID = ""
         
         showName = oneWord("#{response}")
@@ -87,11 +88,23 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         if not showID
             say "Sorry, #{showName} can't be found."
         else
-            addShow(showID, "#{showName}", response)
+            addShow(showIDName[0], showIDName[1], definition)
         end
         
         request_completed
     end
+
+    def changeDef()
+        defQuestion = ask "Would you like to change the quality from the default?"
+        
+        if /(Yes|Yeah|Yup)(.*)/.match(defQuestion)
+            definition = ask "HDTV, SDTV, SDDVD, HDWebDL, HDBluray, FullHDBluray, or Unknown?"
+            
+            return definition
+        
+        else
+            return
+        end
 
     def getNum(strNum)
         if strNum.match("zero ")
@@ -128,10 +141,10 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         return showName
     end            
 
-    def addShow(showID, response, showSpaces)
+    def addShow(showID, showName, definition)
         success = ""
         begin
-            open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}") do |f|
+            open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}&initial=#{definition}") do |f|
                 no = 1
                 f.each do |line|
                     if /result.*success/.match("#{line}")
@@ -141,18 +154,10 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                         success = false
                     end
                 end
-                if /%20/.match(response)
-                    if success
-                        say "#{showSpaces} has been added to SickBeard."
-                    else
-                        say "There was a problem adding #{showSpaces} to SickBeard."
-                    end
+                if success
+                    say "#{showName} has been added to SickBeard."
                 else
-                    if success
-                        say "#{response} has been added to SickBeard."
-                    else
-                        say "There was a problem adding #{response} to SickBeard."
-                    end
+                    say "There was a problem adding #{showName} to SickBeard."
                 end
             end
         rescue Errno::EHOSTUNREACH
@@ -170,7 +175,8 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
                 f.each do |line|
                     if /name/.match("#{line}")
-                        nameLine = "#{line}".gsub(//, "").strip
+                        nameLineArray = "#{line}".split(/":\s"/)
+                        nameLine = nameLineArray[1].gsub(/'$/, "").strip
                         showNameList.push(nameLine)
                         count += 1
                     end
@@ -184,15 +190,15 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                     break if count > 3
                 end
                 if count == 1
-                    return showIDList[0]
+                    return showIDList[0], showNameList[0]
                     
                 elsif count > 1
                     showNameList.each do |numShow|
                         say "#{showNameList.index(numShow)}: #{numShow}", spoken: ""
                     end
                     numWordResponse = ask "Please state the number of the show you would like to add."
-                    numResponse = getNum(numWordResponse.downcase)
-                    return showIDList[numResponse]
+                    numResponse = getNum(numWordResponse.downcase) + 1
+                    return showIDList[numResponse-1], showNameList[numResponse-1]
                 end
             end
         rescue Errno::EHOSTUNREACH
