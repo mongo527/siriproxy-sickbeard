@@ -100,13 +100,10 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         
         if /(Yes|Yeah|Yup)(.*)/.match(defQuestion)
             definition = ask "HDTV, SDTV, SDDVD, HDWebDL, HDBluray, FullHDBluray, or Unknown?", spoken: ""
+        
+        definition = definition.gsub(/\s/, "")
             
-            if /.*\s*.*/.match(definition)
-                definition = definition.gsub(/.*\s*.*/, "")
-                say "You chose #{definition}."
-            end
-            
-            return definition
+        return definition
         
         else
             return
@@ -205,6 +202,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                     end
                     numWordResponse = ask "Please state the number of the show you would like to add."
                     numResponse = getNum(numWordResponse.downcase)
+                    numResponse = numResponse.to_i()
                     numResponse += 1
                     return showIDList[numResponse-1], showNameList[numResponse-1]
                 end
