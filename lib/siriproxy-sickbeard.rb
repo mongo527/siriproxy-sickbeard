@@ -105,6 +105,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         else
             return
         end
+    end
 
     def getNum(strNum)
         if strNum.match("zero ")
