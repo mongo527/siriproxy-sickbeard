@@ -101,8 +101,8 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         if /(Yes|Yeah|Yup)(.*)/.match(defQuestion)
             definition = ask "HDTV, SDTV, SDDVD, HDWebDL, HDBluray, FullHDBluray, or Unknown?", spoken: ""
             
-            if /(\S*\s*\S*)\1\1/.match(definition)
-                definition = definition.gsub(/(\S*\s*\S*)\1\1/, "")
+            if /(\S*\s*\S*)/.match(definition)
+                definition = definition.gsub(/(\S*\s*\S*), "")
             end
             
             return definition
@@ -182,7 +182,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 f.each do |line|
                     if /name/.match("#{line}")
                         nameLineArray = "#{line}".split(/":\s"/)
-                        nameLine = nameLineArray[1].gsub(/",$/, "").strip
+                        nameLine = nameLineArray[1].gsub(/",/, "").strip
                         showNameList.push(nameLine)
                         count += 1
                     end
