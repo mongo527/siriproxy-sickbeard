@@ -70,7 +70,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         showIDName = tvdbSearch(showName)
         showDef = changeDef()
         
-        if not showID
+        if not showIDName[0]
             say "Sorry, #{showName} can't be found."
         else
             addShow(showIDName[0], showIDName[1], definition)
@@ -98,7 +98,11 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         defQuestion = ask "Would you like to change the quality from the default?"
         
         if /(Yes|Yeah|Yup)(.*)/.match(defQuestion)
-            definition = ask "HDTV, SDTV, SDDVD, HDWebDL, HDBluray, FullHDBluray, or Unknown?"
+            definition = ask "HDTV, SDTV, SDDVD, HDWebDL, HDBluray, FullHDBluray, or Unknown?", spoken: ""
+            
+            if /(\S*\s*\S*)\1\1/.match(definition)
+                definition = definition.gsub(/(\S*\s*\S*)\1\1/, "")
+            end
             
             return definition
         
