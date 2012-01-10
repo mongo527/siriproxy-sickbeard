@@ -101,8 +101,8 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         if /(Yes|Yeah|Yup)(.*)/.match(defQuestion)
             definition = ask "HDTV, SDTV, SDDVD, HDWebDL, HDBluray, FullHDBluray, or Unknown?", spoken: ""
             
-            if /(\S*\s*\S*)/.match(definition)
-                definition = definition.gsub(/(\S*\s*\S*), "")
+            if /\S*\s*\S*/.match(definition)
+                definition = definition.gsub(/\S*\s*\S*/, "")
             end
             
             return definition
