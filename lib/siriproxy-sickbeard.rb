@@ -1,6 +1,8 @@
 require 'cora'
 require 'siri_objects'
 require 'open-uri'
+require 'json'
+require 'net/http'
 
 #############
 # This is a plugin for SiriProxy that will allow you to control SickBeard.
