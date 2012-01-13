@@ -15,18 +15,27 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         @api_key = config["sickbeard_api"]
     end
     
-    #@api_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
+    def sickbeardParser(cmd)
+        
+        base_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
+        url = "#{base_url}#{cmd}"
+        resp = Net::HTTP.get_response(URI.parse(url))
+        data = resp.body
+        
+        result = JSON.parse(data)
+        
+        return result
+    end
     
     listen_for /test (sick beard|my show|my shows) server/i do
         begin
-            open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.ping") do |f|
-                f.each do |line|
-                    if /"result":.*success/.match("#{line}")
-                        say "SickBeard is up and running!"
-                    elsif /message.*WRONG\sAPI.*/.match("#{line}")
-                        say "API Key given is incorrect. Please fix this in the config file."
-                    end
-                end
+            server = sickbeardParser("sb.ping")
+            if server["result"] == "success"
+                say "SickBeard is up and running!"
+            elsif server["result"] == "denied"
+                say "API Key given is incorrect. Please fix this in the config file."
+            else
+                say "There was a problem connecting to SickBeard."
             end
         rescue Errno::EHOSTUNREACH
             say "Sorry, I could not connect to your SickBeard Server."
