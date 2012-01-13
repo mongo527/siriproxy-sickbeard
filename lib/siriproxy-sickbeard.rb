@@ -48,28 +48,17 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     listen_for /search the (back\slog|backlog)/i do
-        success=""
         begin
-            open("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.forcesearch") do |f|
-                no = 1
-                f.each do |line|
-                    if /"result":.*success/.match("#{line}")
-                        success = true
-                        break
-                    else
-                        success = false
-                    end
-                    no += 1
-                    break if no > 5
-                end
-                if success
-                    say "SickBeard is refreshing the Backlog."
-                else
-                    say "There was a problem refreshing the Backlog."
-                end
+            server = sickbeardParser("sb.forcesearch")
+            if server["result"] == "success"
+                say "Sickbeard is refreshing the Backlog!"
+            else
+                say "There was a problem refreshing the Backlog."
             end
         rescue Errno::EHOSTUNREACH
             say "Sorry, I could not connect to your SickBeard Server."
+        rescue Errno::ECONNREFUSED
+            say "Sorry, SickBeard is nut running."
         end
         request_completed
     end
