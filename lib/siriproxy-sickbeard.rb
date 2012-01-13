@@ -15,13 +15,13 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         @api_key = config["sickbeard_api"]
     end
     
-    #    @api_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
+    #@api_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
     
     listen_for /test (sick beard|my show|my shows) server/i do
         begin
             open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.ping") do |f|
                 f.each do |line|
-                    if /result.*success/.match("#{line}")
+                    if /"result":.*success/.match("#{line}")
                         say "SickBeard is up and running!"
                     elsif /message.*WRONG\sAPI.*/.match("#{line}")
                         say "API Key given is incorrect. Please fix this in the config file."
@@ -42,7 +42,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             open("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.forcesearch") do |f|
                 no = 1
                 f.each do |line|
-                    if /result.*success/.match("#{line}")
+                    if /"result":.*success/.match("#{line}")
                         success = true
                         break
                     else
@@ -151,7 +151,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}&initial=#{definition}") do |f|
                 no = 1
                 f.each do |line|
-                    if /result.*success/.match("#{line}")
+                    if /"result":.*success/.match("#{line}")
                         success = true
                         break
                     else
