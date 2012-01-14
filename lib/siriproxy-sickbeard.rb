@@ -150,7 +150,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         end
     end
 
-    def tvdbSearch(showName)
+    def tvdbSearch(response)
         showList = Array.new
         num = 0
         
