@@ -230,6 +230,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                         return showList[realNum]
                     end
                 end
+            end
 
         rescue Errno::EHOSTUNREACH
             return say "Sorry, I could not connect to your SickBeard Server."
