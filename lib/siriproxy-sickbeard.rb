@@ -17,18 +17,6 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         @api_key = config["sickbeard_api"]
     end
     
-    def sickbeardParser(cmd)
-        
-        base_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
-        url = "#{base_url}#{cmd}"
-        resp = Net::HTTP.get_response(URI.parse(url))
-        data = resp.body
-        
-        result = JSON.parse(data)
-        
-        return result
-    end
-    
     listen_for /test (sick beard|my show|my shows) server/i do
         begin
             server = sickbeardParser("sb.ping")
@@ -43,6 +31,8 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             say "Sorry, I could not connect to your SickBeard Server."
         rescue Errno::ECONNREFUSED
             say "Sorry, SickBeard is not running."
+        rescue Errno::ENETUNREACH
+            say "Sorry, Could not connect to the network."
         end
         request_completed
     end
@@ -51,7 +41,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         begin
             server = sickbeardParser("sb.forcesearch")
             if server["result"] == "success"
-                say "Sickbeard is refreshing the Backlog!"
+                say "SickBeard is refreshing the Backlog!"
             else
                 say "There was a problem refreshing the Backlog."
             end
@@ -59,6 +49,8 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             say "Sorry, I could not connect to your SickBeard Server."
         rescue Errno::ECONNREFUSED
             say "Sorry, SickBeard is nut running."
+        rescue Errno::ENETUNREACH
+            say "Sorry, Could not connect to the network."
         end
         request_completed
     end
@@ -66,33 +58,42 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     listen_for /add new show/i do
         response = ask "What Show would you like to add?"
         
-        showName = oneWord(response)        
-        showIDName = tvdbSearch(showName)
+        showIDName = tvdbSearch(response)
         showDef = changeDef()
         
-        if not showIDName[0]
-            say "Sorry, #{showName} can't be found."
+        if not showIDName
+            say "Sorry, #{response} can't be found."
         else
-            addShow(showIDName[0], showIDName[1], showDef)
+            addShow(showIDName["name"], showIDName["tvdbid"], showDef)
         end
-            
+        
         request_completed
     end
 
     listen_for /add (.+) to my shows/i do |response|
-        showID = ""
         
-        showName = oneWord("#{response}")
-        showIDName = tvdbSearch(showName)
+        showIDName = tvdbSearch(response)
         showDef = changeDef()
         
-        if not showID
-            say "Sorry, #{showName} can't be found."
+        if not showIDName
+            say "Sorry, #{response} can't be found."
         else
-            addShow(showIDName[0], showIDName[1], showDef)
+            addShow(showIDName["name"], showIDName["tvdbid"], showDef)
         end
         
         request_completed
+    end
+
+    def sickbeardParser(cmd)
+        
+        base_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
+        url = "#{base_url}#{cmd}"
+        resp = Net::HTTP.get_response(URI.parse(url))
+        data = resp.body
+        
+        result = JSON.parse(data)
+        
+        return result
     end
 
     def changeDef()
@@ -129,87 +130,115 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         if strNum.match("five ")
             return 5
         end
-    end
+    end           
 
-    def oneWord(response)
-        single = ""
-        if /\S*\s\S.*/.match("#{response}")
-            single = ask "Should #{response} be one word?"
-        end
-        if /(Yes|Yeah|Yup)(.*)/.match(single)
-            showName = response.gsub(/\s/, "")
-        else
-            showName = response.gsub(/\s/, "%20")
-        end
-        
-        return showName
-    end            
-
-    def addShow(showID, showName, definition)
+    def addShow(showName, showID, definition)
         success = ""
         begin
-            open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=show.addnew&tvdbid=#{showID}&initial=#{definition}") do |f|
-                no = 1
-                f.each do |line|
-                    if /"result":.*success/.match("#{line}")
-                        success = true
-                        break
-                    else
-                        success = false
-                    end
-                end
-                if success
-                    say "#{showName} has been added to SickBeard."
-                else
-                    say "There was a problem adding #{showName} to SickBeard."
-                end
+            server = sickbeard("show.addnew&tvdbid=#{showID}&initial=#{definition}")
+            if server["result"] == "success"
+                return say "#{showName} was successfully added to SickBeard!"
+            elsif server["result"] == "failure"
+                return say server["message"]
+            else
+                return say "There was a problem adding #{showName} to SickBeard."
             end
         rescue Errno::EHOSTUNREACH
-            say "Sorry, I could not connect to your SickBeard Server."
+            return say "Sorry, I could not connect to your SickBeard Server."
+        rescue Errno::ECONNREFUSED
+            return say "Sorry, SickBeard is not running."
         end
     end
 
     def tvdbSearch(showName)
-        showNameList = Array.new
-        showIDList = Array.new
-        success = ""
-        count = 0
+        showList = Array.new
+        num = 0
         
         begin
-            open ("http://#{@host}:#{@port}/api/#{@api_key}/?cmd=sb.searchtvdb&name=#{showName}") do |f|
-                f.each do |line|
-                    if /name/.match("#{line}")
-                        nameLineArray = "#{line}".split(/":\s"/)
-                        nameLine = nameLineArray[1].gsub(/",/, "").strip
-                        showNameList.push(nameLine)
-                        count += 1
+            if not /\s/.match(response)
+                shows = sickbeard("sb.searchtvdb&name=#{response}")["data"]["results"]
+                if shows == []
+                    return say "Sorry, #{response} could not be found."
+                else
+                    for count in shows
+                        showList.push(shows[num])
+                        num += 1
                     end
-                    if /tvdbid/.match("#{line}")
-                        showID = (/[0-9].*/.match("#{line}")).to_s()
-                        showIDList.push(showID)
-                        success = true
-                    else
-                        success = false
-                    end
-                    break if count > 3
-                end
-                if count == 1
-                    return showIDList[0], showNameList[0]
                     
-                elsif count > 1
-                    showNameList.each do |numShow|
-                        say "#{showNameList.index(numShow)}: #{numShow}", spoken: ""
+                    if showList.length == 1
+                        return showList[0]
+                    else
+                        showList.each do |showsFound|
+                            showNumber.push(showList.index(showsFound)+1)
+                            say "#{showNumber}: #{showsFound}", spoken: ""
+                            break if showNumber > 3
+                        end
+                        numWordResponse = ask "Please state the number of the show you would like to add."
+                        numResponse = getNum(numWordResponse.downcase)
+                        numResponse = numResponse.to_i()
+                        realNum = numResponse - 1
+                        return showList[realNum]
                     end
-                    numWordResponse = ask "Please state the number of the show you would like to add."
-                    numResponse = getNum(numWordResponse.downcase)
-                    numResponse = numResponse.to_i()
-                    numResponse += 1
-                    return showIDList[numResponse-1], showNameList[numResponse-1]
                 end
-            end
+            else
+                showName = response.gsub(/\s/, "%20")
+                shows = sickbeard("sb.searchtvdb&name=#{showName}")["data"]["results"]
+                if shows == []
+                    showName = response.gsub(/\s/, "")
+                    shows = sickbeard("sb.searchtvdb&name=#{showName}")["data"]["results"]
+                    if shows == []
+                        return say "Sorry, #{response} could not be found"
+                    else
+                        for count in shows
+                            showList.push(shows[num])
+                            num += 1
+                        end
+                        
+                        if showList.length == 1
+                            return showList[0]
+                        else
+                            showList.each do |showsFound|
+                                showNumber.push(showList.index(showsFound)+1)
+                                say "#{showNumber}: #{showsFound}", spoken: ""
+                                break if showNumber > 3
+                            end
+                            numWordResponse = ask "Please state the number of the show you would like to add."
+                            numResponse = getNum(numWordResponse.downcase)
+                            numResponse = numResponse.to_i()
+                            realNum = numResponse - 1
+                            return showList[realNum]
+                        end
+                    end
+                else
+                    for count in shows
+                        showList.push(shows[num])
+                        num += 1
+                    end
+                    
+                    if showList.length == 1
+                        return showList[0]
+                    else
+                        showList.each do |showsFound|
+                            showNumber.push(showList.index(showsFound)+1)
+                            say "#{showNumber}: #{showsFound}", spoken: ""
+                            break if showNumber > 3
+                        end
+                        numWordResponse = ask "Please state the number of the show you would like to add."
+                        numResponse = getNum(numWordResponse.downcase)
+                        numResponse = numResponse.to_i()
+                        realNum = numResponse - 1
+                        return showList[realNum]
+                    end
+                end
+
         rescue Errno::EHOSTUNREACH
-            say "Sorry, I could not connect to your SickBeard Server."
+            return say "Sorry, I could not connect to your SickBeard Server."
+        rescue Errno::ECONNREFUSED
+            return say "Sorry, SickBeard is not running."
+        rescue Errno::ENETUNREACH
+            return say "Sorry, Could not connect to the network."
+        rescue Errno::ETIMEDOUT
+            return say "Sorry, The operation timed out."
         end
-        return
     end
 end
