@@ -152,6 +152,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
 
     def tvdbSearch(response)
         showList = Array.new
+        showNumber = ""
         num = 0
         
         begin
