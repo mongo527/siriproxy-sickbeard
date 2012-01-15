@@ -95,7 +95,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 say "You have no shows on today."
             else
                 for i in shows
-                    say "#{shows[num]['show_name']} is on tonight, #{shows[num]['airs']}
+                    say "#{shows[num]['show_name']} is on tonight, #{shows[num]['airs']}."
                 end
             end
         rescue Errno::EHOSTUNREACH
