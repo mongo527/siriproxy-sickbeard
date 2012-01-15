@@ -170,7 +170,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                         return showList[0]
                     else
                         showList.each do |showsFound|
-                            showNumber.push(showList.index(showsFound)+1)
+                            showNumber = showList.index(showsFound)+1
                             say "#{showNumber}: #{showsFound}", spoken: ""
                             break if showNumber > 3
                         end
