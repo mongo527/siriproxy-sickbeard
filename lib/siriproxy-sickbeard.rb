@@ -135,7 +135,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     def addShow(showName, showID, definition)
         success = ""
         begin
-            server = sickbeard("show.addnew&tvdbid=#{showID}&initial=#{definition}")
+            server = sickbeardParser("show.addnew&tvdbid=#{showID}&initial=#{definition}")
             if server["result"] == "success"
                 return say "#{showName} was successfully added to SickBeard!"
             elsif server["result"] == "failure"
@@ -156,7 +156,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         
         begin
             if not /\s/.match(response)
-                shows = sickbeard("sb.searchtvdb&name=#{response}")["data"]["results"]
+                shows = sickbeardParser("sb.searchtvdb&name=#{response}")["data"]["results"]
                 if shows == []
                     return say "Sorry, #{response} could not be found."
                 else
@@ -182,10 +182,10 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 end
             else
                 showName = response.gsub(/\s/, "%20")
-                shows = sickbeard("sb.searchtvdb&name=#{showName}")["data"]["results"]
+                shows = sickbeardParser"sb.searchtvdb&name=#{showName}")["data"]["results"]
                 if shows == []
                     showName = response.gsub(/\s/, "")
-                    shows = sickbeard("sb.searchtvdb&name=#{showName}")["data"]["results"]
+                    shows = sickbeardParser"sb.searchtvdb&name=#{showName}")["data"]["results"]
                     if shows == []
                         return say "Sorry, #{response} could not be found"
                     else
