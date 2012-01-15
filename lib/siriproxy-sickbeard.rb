@@ -145,6 +145,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                     return message
                 else
                     return say server["message"]
+                end
             else
                 return say "There was a problem adding #{showName} to SickBeard."
             end
