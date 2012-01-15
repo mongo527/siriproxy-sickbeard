@@ -182,10 +182,10 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 end
             else
                 showName = response.gsub(/\s/, "%20")
-                shows = sickbeardParser"sb.searchtvdb&name=#{showName}")["data"]["results"]
+                shows = sickbeardParser("sb.searchtvdb&name=#{showName}")["data"]["results"]
                 if shows == []
                     showName = response.gsub(/\s/, "")
-                    shows = sickbeardParser"sb.searchtvdb&name=#{showName}")["data"]["results"]
+                    shows = sickbeardParser("sb.searchtvdb&name=#{showName}")["data"]["results"]
                     if shows == []
                         return say "Sorry, #{response} could not be found"
                     else
