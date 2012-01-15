@@ -172,7 +172,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                         showList.each do |showsFound|
                             showNumber = showList.index(showsFound)+1
                             say "#{showNumber}: #{showsFound['name']}", spoken: ""
-                            break if showNumber > 3
+                            break if showNumber > 2
                         end
                         numWordResponse = ask "Please state the number of the show you would like to add."
                         numResponse = getNum(numWordResponse.downcase)
@@ -201,7 +201,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                             showList.each do |showsFound|
                                 showNumber.push(showList.index(showsFound)+1)
                                 say "#{showNumber}: #{showsFound}", spoken: ""
-                                break if showNumber > 3
+                                break if showNumber > 2
                             end
                             numWordResponse = ask "Please state the number of the show you would like to add."
                             numResponse = getNum(numWordResponse.downcase)
@@ -222,7 +222,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                         showList.each do |showsFound|
                             showNumber.push(showList.index(showsFound)+1)
                             say "#{showNumber}: #{showsFound}", spoken: ""
-                            break if showNumber > 3
+                            break if showNumber > 2
                         end
                         numWordResponse = ask "Please state the number of the show you would like to add."
                         numResponse = getNum(numWordResponse.downcase)
