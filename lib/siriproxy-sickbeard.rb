@@ -150,6 +150,32 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         end
     end
 
+    def list_of_shows(shows)
+        showList = Array.new
+        showNumber = ""
+        num = 0
+        
+        for count in shows
+            showList.push(shows[num])
+            num += 1
+        end
+        
+        if showList.length == 1
+            return showList[0]
+        else
+            showList.each do |showsFound|
+                showNumber = showList.index(showsFound)+1
+                say "#{showNumber}: #{showsFound['name']}", spoken: ""
+                break if showNumber > 2
+            end
+            numWordResponse = ask "Please state the number of the show you would like to add."
+            numResponse = getNum(numWordResponse.downcase)
+            numResponse = numResponse.to_i()
+            realNum = numResponse - 1
+            return showList[realNum]
+        end
+    end
+
     def tvdbSearch(response)
         showList = Array.new
         showNumber = ""
@@ -161,25 +187,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 if shows == []
                     return say "Sorry, #{response} could not be found."
                 else
-                    for count in shows
-                        showList.push(shows[num])
-                        num += 1
-                    end
-                    
-                    if showList.length == 1
-                        return showList[0]
-                    else
-                        showList.each do |showsFound|
-                            showNumber = showList.index(showsFound)+1
-                            say "#{showNumber}: #{showsFound['name']}", spoken: ""
-                            break if showNumber > 2
-                        end
-                        numWordResponse = ask "Please state the number of the show you would like to add."
-                        numResponse = getNum(numWordResponse.downcase)
-                        numResponse = numResponse.to_i()
-                        realNum = numResponse - 1
-                        return showList[realNum]
-                    end
+                    return list_of_shows(shows)
                 end
             else
                 showName = response.gsub(/\s/, "%20")
@@ -199,7 +207,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                             return showList[0]
                         else
                             showList.each do |showsFound|
-                                showNumber.push(showList.index(showsFound)+1)
+                                showNumber = showList.index(showsFound)+1
                                 say "#{showNumber}: #{showsFound}", spoken: ""
                                 break if showNumber > 2
                             end
@@ -220,7 +228,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                         return showList[0]
                     else
                         showList.each do |showsFound|
-                            showNumber.push(showList.index(showsFound)+1)
+                            showNumber = showList.index(showsFound)+1
                             say "#{showNumber}: #{showsFound}", spoken: ""
                             break if showNumber > 2
                         end
