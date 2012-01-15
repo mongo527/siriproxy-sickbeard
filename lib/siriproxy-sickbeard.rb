@@ -59,11 +59,11 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         response = ask "What Show would you like to add?"
         
         showIDName = tvdbSearch(response)
-        showDef = changeDef()
         
         if not showIDName
             say "Sorry, #{response} can't be found."
         else
+            showDef = changeDef()
             addShow(showIDName["name"], showIDName["tvdbid"], showDef)
         end
         
@@ -73,11 +73,11 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     listen_for /add (.+) to my shows/i do |response|
         
         showIDName = tvdbSearch(response)
-        showDef = changeDef()
         
         if not showIDName
             say "Sorry, #{response} can't be found."
         else
+            showDef = changeDef()
             addShow(showIDName["name"], showIDName["tvdbid"], showDef)
         end
         
