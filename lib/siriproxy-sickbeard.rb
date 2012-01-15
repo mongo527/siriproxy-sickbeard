@@ -142,10 +142,9 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 message = server["message"]
                 if /tvdbid/.match(message)
                     message = message.gsub(/tvdbid/, "TVDBID")
-                    return say message
-                else
-                    return say server["message"]
                 end
+                
+                return message
             else
                 return say "There was a problem adding #{showName} to SickBeard."
             end
