@@ -6,7 +6,7 @@ require 'net/http'
 
 #############
 # This is a plugin for SiriProxy that will allow you to control SickBeard.
-# Example usage: "search sick beard backlog."
+# Example usage: "search my shows backlog."
 #############
 
 class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
@@ -33,11 +33,13 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             say "Sorry, SickBeard is not running."
         rescue Errno::ENETUNREACH
             say "Sorry, Could not connect to the network."
+        rescue Errno::ETIMEDOUT
+            say "Sorry, The operation timed out."
         end
         request_completed
     end
 
-    listen_for /search the (back\slog|backlog)/i do
+    listen_for /search (the|my shows|my show|sick beard) (back\slog|backlog)/i do
         begin
             server = sickbeardParser("sb.forcesearch")
             if server["result"] == "success"
@@ -51,6 +53,8 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             say "Sorry, SickBeard is nut running."
         rescue Errno::ENETUNREACH
             say "Sorry, Could not connect to the network."
+        rescue Errno::ETIMEDOUT
+            say "Sorry, The operation timed out."
         end
         request_completed
     end
@@ -81,6 +85,28 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             addShow(showIDName["name"], showIDName["tvdbid"], showDef)
         end
         
+        request_completed
+    end
+
+    listen_for /((what is|whats) on (today|tonight)|(anything|any shows) on (today|tonight))/i do
+        begin
+            shows = sickbeardParser("future&sort=date&type=today")["data"]["today"]
+            if shows == []
+                say "You have no shows on today."
+            else
+                for i in shows
+                    say "#{shows[num]['show_name']} is on tonight, #{shows[num]['airs']}
+                end
+            end
+        rescue Errno::EHOSTUNREACH
+            say "Sorry, I could not connect to your SickBeard Server."
+        rescue Errno::ECONNREFUSED
+            say "Sorry, SickBeard is nut running."
+        rescue Errno::ENETUNREACH
+            say "Sorry, Could not connect to the network."
+        rescue Errno::ETIMEDOUT
+            say "Sorry, The operation timed out."
+        end
         request_completed
     end
 
@@ -152,6 +178,10 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             return say "Sorry, I could not connect to your SickBeard Server."
         rescue Errno::ECONNREFUSED
             return say "Sorry, SickBeard is not running."
+        rescue Errno::ENETUNREACH
+            return say "Sorry, Could not connect to the network."
+        rescue Errno::ETIMEDOUT
+            return say "Sorry, The operation timed out."
         end
     end
 
@@ -218,7 +248,6 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                     end
                 end
             end
-
         rescue Errno::EHOSTUNREACH
             return say "Sorry, I could not connect to your SickBeard Server."
         rescue Errno::ECONNREFUSED
