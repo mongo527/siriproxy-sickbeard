@@ -60,8 +60,8 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         
         showIDName = tvdbSearch(response)
         
-        if not showIDName
-            say "Sorry, #{response} can't be found."
+        if not showIDName["name"]
+            request_completed
         else
             showDef = changeDef()
             addShow(showIDName["name"], showIDName["tvdbid"], showDef)
@@ -74,8 +74,8 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         
         showIDName = tvdbSearch(response)
         
-        if not showIDName
-            say "Sorry, #{response} can't be found."
+        if not showIDName["name"]
+            request_completed
         else
             showDef = changeDef()
             addShow(showIDName["name"], showIDName["tvdbid"], showDef)
