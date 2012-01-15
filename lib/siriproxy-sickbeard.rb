@@ -171,7 +171,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                     else
                         showList.each do |showsFound|
                             showNumber = showList.index(showsFound)+1
-                            say "#{showNumber}: #{showsFound}", spoken: ""
+                            say "#{showNumber}: #{showsFound['name']}", spoken: ""
                             break if showNumber > 3
                         end
                         numWordResponse = ask "Please state the number of the show you would like to add."
