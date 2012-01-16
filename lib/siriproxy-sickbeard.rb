@@ -110,6 +110,29 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         request_completed
     end
 
+    listen_for /(what is|whats|whats) on this week/i do
+        begin
+            shows = sickbeardParser("future&sort=date&type=soon")["data"]["soon"]
+            if shows == []
+                say "You have no shows on today."
+            else
+                for i in shows
+                    say "#{shows[num]['show_name']} is on tonight, #{shows[num]['airs']}."
+                    break if i > 2
+                end
+            end
+        rescue Errno::EHOSTUNREACH
+            say "Sorry, I could not connect to your SickBeard Server."
+        rescue Errno::ECONNREFUSED
+            say "Sorry, SickBeard is nut running."
+        rescue Errno::ENETUNREACH
+            say "Sorry, Could not connect to the network."
+        rescue Errno::ETIMEDOUT
+            say "Sorry, The operation timed out."
+        end
+        request_completed
+    end
+
     def sickbeardParser(cmd)
         
         base_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
