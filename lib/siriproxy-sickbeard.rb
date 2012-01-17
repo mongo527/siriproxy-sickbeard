@@ -89,6 +89,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     listen_for /((what is|whats) on (today|tonight)|(anything|any shows) on (today|tonight))/i do
+        num = ""
         begin
             shows = sickbeardParser("future&sort=date&type=today")["data"]["today"]
             if shows == []
@@ -96,6 +97,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             else
                 for i in shows
                     say "#{shows[num]['show_name']} is on tonight, #{shows[num]['airs']}."
+                    num += 1
                 end
             end
         rescue Errno::EHOSTUNREACH
@@ -111,6 +113,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     listen_for /(what is|whats|whats) on this week/i do
+        num = ""
         begin
             shows = sickbeardParser("future&sort=date&type=soon")["data"]["soon"]
             if shows == []
@@ -118,6 +121,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             else
                 for i in shows
                     say "#{shows[num]['show_name']} is on tonight, #{shows[num]['airs']}."
+                    num += 1
                     break if i > 2
                 end
             end
