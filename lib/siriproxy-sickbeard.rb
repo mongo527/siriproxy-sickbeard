@@ -117,12 +117,12 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         begin
             shows = sickbeardParser("future&sort=date&type=soon")["data"]["soon"]
             if shows == []
-                say "You have no shows on today."
+                say "You have no shows on this week."
             else
                 for i in shows
-                    say "#{shows[num]['show_name']} is on tonight, #{shows[num]['airs']}."
+                    say "#{shows[num]['show_name']} is on #{shows[num]['airs']}."
                     num += 1
-                    break if i > 2
+                    break if num > 2
                 end
             end
         rescue Errno::EHOSTUNREACH
