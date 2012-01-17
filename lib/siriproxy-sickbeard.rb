@@ -89,7 +89,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     listen_for /((what is|whats) on (today|tonight)|(anything|any shows) on (today|tonight))/i do
-        num = ""
+        num = 0
         begin
             shows = sickbeardParser("future&sort=date&type=today")["data"]["today"]
             if shows == []
@@ -113,7 +113,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     listen_for /(what is|whats|whats) on this week/i do
-        num = ""
+        num = 0
         begin
             shows = sickbeardParser("future&sort=date&type=soon")["data"]["soon"]
             if shows == []
