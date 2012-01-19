@@ -257,6 +257,14 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                     end
                 end
             end
+        rescue Errno::EHOSTUNREACH
+            return say "Sorry, I could not connect to your SickBeard Server."
+        rescue Errno::ECONNREFUSED
+            return say "Sorry, SickBeard is not running."
+        rescue Errno::ENETUNREACH
+            return say "Sorry, Could not connect to the network."
+        rescue Errno::ETIMEDOUT
+            return say "Sorry, The operation timed out."
         end
     end
 
@@ -264,18 +272,18 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         begin
             server = sickbeardParser("show.update&tvdbid=#{tvdbid}")
             if server["result"] == "success"
-                return "#{showName} is being updated!"
+                return say "#{showName} is being updated!"
             else
-                return "There was a problem updating #{showName}."
+                return say "There was a problem updating #{showName}."
             end
         rescue Errno::EHOSTUNREACH
-            return "Sorry, I could not connect to your SickBeard Server."
+            return say "Sorry, I could not connect to your SickBeard Server."
         rescue Errno::ECONNREFUSED
-            return "Sorry, SickBeard is not running."
+            return say "Sorry, SickBeard is not running."
         rescue Errno::ENETUNREACH
-            return "Sorry, Could not connect to the network."
+            return say "Sorry, Could not connect to the network."
         rescue Errno::ETIMEDOUT
-            return "Sorry, The operation timed out."
+            return say "Sorry, The operation timed out."
         end
     end
 
