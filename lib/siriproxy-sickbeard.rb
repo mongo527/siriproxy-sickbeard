@@ -141,6 +141,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         else
             updateShow(show[0], show[1])
         end
+        request_completed
     end
 
     def sickbeardParser(cmd)
