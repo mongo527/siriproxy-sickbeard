@@ -89,15 +89,13 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     listen_for /((what is|whats) on (today|tonight)|(anything|any shows) on (today|tonight))/i do
-        num = 0
         begin
             shows = sickbeardParser("future&sort=date&type=today")["data"]["today"]
             if shows == []
                 say "You have no shows on today."
             else
                 for i in shows
-                    say "#{shows[num]['show_name']} is on tonight, #{shows[num]['airs']}."
-                    num += 1
+                    say "#{i['show_name']} is on tonight, #{i['airs']}."
                 end
             end
         rescue Errno::EHOSTUNREACH
@@ -113,16 +111,14 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     listen_for /(what is|whats|whats) on this week/i do
-        num = 0
         begin
             shows = sickbeardParser("future&sort=date&type=soon")["data"]["soon"]
             if shows == []
                 say "You have no shows on this week."
             else
                 for i in shows
-                    say "#{shows[num]['show_name']} is on #{shows[num]['airs']}."
-                    num += 1
-                    break if num > 2
+                    break if shows.index(i) > 2
+                    say "#{i['show_name']} is on #{i['airs']}."
                 end
             end
         rescue Errno::EHOSTUNREACH
@@ -135,6 +131,16 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             say "Sorry, The operation timed out."
         end
         request_completed
+    end
+
+    listen_for /update (.*) from my shows/i do |response|
+        
+        show = searchShows(response)
+        if not show[1]
+            say "Sorry, I could not find #{response} in your shows."
+        else
+            updateShow(show[0], show[1])
+        end
     end
 
     def sickbeardParser(cmd)
@@ -235,6 +241,41 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             numResponse = numResponse.to_i()
             realNum = numResponse - 1
             return showList[realNum]
+        end
+    end
+
+    def searchShows(response)
+        begin
+            shows = sickbeardParser("shows")["data"]
+            for i in shows
+                if i[1]["show_name"].downcase == response.downcase
+                    return i[0], i[1]["show_name"]
+                else
+                    showName = response.gsub(/\s/, "")
+                    if i[1]["show_name"].downcase == showName.downcase
+                        return i[0], i[1]["show_name"]
+                    end
+                end
+            end
+        end
+    end
+
+    def updateShow(tvdbid, showName)
+        begin
+            server = sickbeardParser("show.update&tvdbid=#{tvdbid}")
+            if server["result"] == "success"
+                return "#{name} is being updated!"
+            else
+                return "There was a problem updating #{name}."
+            end
+        rescue Errno::EHOSTUNREACH
+            return "Sorry, I could not connect to your SickBeard Server."
+        rescue Errno::ECONNREFUSED
+            return "Sorry, SickBeard is not running."
+        rescue Errno::ENETUNREACH
+            return "Sorry, Could not connect to the network."
+        rescue Errno::ETIMEDOUT
+            return "Sorry, The operation timed out."
         end
     end
 
