@@ -20,13 +20,13 @@ Installation
 2. Change options that need to be changed in config.yml.
 
 3. Run the bundler
-	$ siriproxy bundle
+	- $ siriproxy bundle
 
 4. Start SiriProxy using 
-	$ rvmsudo siriproxy server
+	- $ rvmsudo siriproxy server
 
 5. Test SiriProxy-SickBeard
-	"Test SickBeard Server"
+	- "Test SickBeard Server"
 
 Voice Commands
 --
@@ -35,6 +35,9 @@ Voice Commands
 + search the back log
 + add new show
 + add *show* to my shows
++ what is on tonight
++ what is on this week
++ update *show* from my shows
 
 + In my experience Siri has a problem when I say Sick Beard. So I instead say my shows.
 
@@ -49,5 +52,7 @@ Credits
 --
 
 Thanks to [Plamoni](https://github.com/plamoni/SiriProxy) and [Westbaer](https://github.com/westbaer/SiriProxy) for SiriProxy.
+
+Thanks to midgetspy for [SickBeard](http://sickbeard.com).
 
 You are free to use, modify, and redistribute the SiriProxy-SickBeard gem as long as proper credit is given to.
