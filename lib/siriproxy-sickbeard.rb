@@ -264,9 +264,9 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         begin
             server = sickbeardParser("show.update&tvdbid=#{tvdbid}")
             if server["result"] == "success"
-                return "#{name} is being updated!"
+                return "#{showName} is being updated!"
             else
-                return "There was a problem updating #{name}."
+                return "There was a problem updating #{showName}."
             end
         rescue Errno::EHOSTUNREACH
             return "Sorry, I could not connect to your SickBeard Server."
