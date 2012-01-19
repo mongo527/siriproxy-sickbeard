@@ -28,6 +28,9 @@ Installation
 5. Test SiriProxy-SickBeard
 	- "Test SickBeard Server"
 
+6. To update:
+	- $ siriproxy update
+
 Voice Commands
 --
 
