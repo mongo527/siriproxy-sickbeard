@@ -88,7 +88,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         request_completed
     end
 
-    listen_for /((what is|whats) on (today|tonight)|(anything|any shows) on (today|tonight))/i do
+    listen_for /(what is|whats|anything|any shows) on (today|tonight)/i do
         begin
             shows = sickbeardParser("future&sort=date&type=today")["data"]["today"]
             if shows == []
@@ -140,6 +140,19 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
             say "Sorry, I could not find #{response} in your shows."
         else
             updateShow(show[0], show[1])
+        end
+        request_completed
+    end
+    
+    listen_for /what were the last shows downloaded/i do
+        
+        shows = sickbeardParser("history&limit=5&type=downloaded")["data"]
+        if shows == []
+            say "Sorry, no shows were downloaded"
+        else
+            for i in shows
+                say "#{i['show_name']} season #{i['season']}, episode #{i['episode']} was #{i['status']}"
+            end
         end
         request_completed
     end
