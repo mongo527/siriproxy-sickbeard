@@ -38,9 +38,10 @@ Voice Commands
 + search the back log
 + add new show
 + add *show* to my shows
++ update *show* from my shows
 + what is on tonight
 + what is on this week
-+ update *show* from my shows
++ what shows did i get
 
 + In my experience Siri has a problem when I say Sick Beard. So I instead say my shows.
 

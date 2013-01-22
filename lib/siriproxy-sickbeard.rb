@@ -144,14 +144,14 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         request_completed
     end
     
-    listen_for /what shows did i recently get/i do
+    listen_for /what shows did (i recently|i) get/i do
         
         shows = sickbeardParser("history&limit=3&type=downloaded")["data"]
         if shows == []
             say "Sorry, no shows were downloaded"
         else
             for i in shows
-                say "#{i['show_name']} season #{i['season']} episode #{i['episode']} on #{i['date']}"
+                say "#{i['show_name']} season #{i['season']} episode #{i['episode']}"
             end
         end
         request_completed
