@@ -62,31 +62,48 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     listen_for /add new show/i do
-        response = ask "What Show would you like to add?"
-        
-        showIDName = tvdbSearch(response)
-        
-        if not showIDName["name"]
-            request_completed
-        else
-            showDef = changeDef()
-            addShow(showIDName["name"], showIDName["tvdbid"], showDef)
+        begin
+            response = ask "What Show would you like to add?"
+            
+            showIDName = tvdbSearch(response)
+            
+            if not showIDName["name"]
+                request_completed
+            else
+                showDef = changeDef()
+                addShow(showIDName["name"], showIDName["tvdbid"], showDef)
+            end
+        rescue Errno::EHOSTUNREACH
+            say "Sorry, I could not connect to your SickBeard Server."
+        rescue Errno::ECONNREFUSED
+            say "Sorry, SickBeard is nut running."
+        rescue Errno::ENETUNREACH
+            say "Sorry, Could not connect to the network."
+        rescue Errno::ETIMEDOUT
+            say "Sorry, The operation timed out."
         end
-        
         request_completed
     end
 
     listen_for /add (.+) to my shows/i do |response|
-        
-        showIDName = tvdbSearch(response)
-        
-        if not showIDName["name"]
-            request_completed
-        else
-            showDef = changeDef()
-            addShow(showIDName["name"], showIDName["tvdbid"], showDef)
+        begin
+            showIDName = tvdbSearch(response)
+            
+            if not showIDName["name"]
+                request_completed
+            else
+                showDef = changeDef()
+                addShow(showIDName["name"], showIDName["tvdbid"], showDef)
+            end
+        rescue Errno::EHOSTUNREACH
+            say "Sorry, I could not connect to your SickBeard Server."
+        rescue Errno::ECONNREFUSED
+            say "Sorry, SickBeard is nut running."
+        rescue Errno::ENETUNREACH
+            say "Sorry, Could not connect to the network."
+        rescue Errno::ETIMEDOUT
+            say "Sorry, The operation timed out."
         end
-        
         request_completed
     end
 
@@ -136,39 +153,66 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
 
     listen_for /update (.*) from my shows/i do |response|
-        
-        show = searchShows(response)
-        if not show[1]
-            say "Sorry, I could not find #{response} in your shows."
-        else
-            updateShow(show[0], show[1])
+        begin
+            show = searchShows(response)
+            if not show[1]
+                say "Sorry, I could not find #{response} in your shows."
+            else
+                updateShow(show[0], show[1])
+            end
+        rescue Errno::EHOSTUNREACH
+            say "Sorry, I could not connect to your SickBeard Server."
+        rescue Errno::ECONNREFUSED
+            say "Sorry, SickBeard is nut running."
+        rescue Errno::ENETUNREACH
+            say "Sorry, Could not connect to the network."
+        rescue Errno::ETIMEDOUT
+            say "Sorry, The operation timed out."
         end
         request_completed
     end
     
     listen_for /what shows did (i recently|i) (get|get recently)/i do
-        
-        shows = sickbeardParser("history&limit=3&type=downloaded")["data"]
-        if shows == []
-            say "Sorry, no shows were downloaded"
-        else
-            for i in shows
-                say "#{i['show_name']} season #{i['season']} episode #{i['episode']}"
+        begin
+            shows = sickbeardParser("history&limit=3&type=downloaded")["data"]
+            if shows == []
+                say "Sorry, no shows were downloaded"
+            else
+                for i in shows
+                    say "#{i['show_name']} season #{i['season']} episode #{i['episode']}"
+                end
             end
+        rescue Errno::EHOSTUNREACH
+            say "Sorry, I could not connect to your SickBeard Server."
+        rescue Errno::ECONNREFUSED
+            say "Sorry, SickBeard is nut running."
+        rescue Errno::ENETUNREACH
+            say "Sorry, Could not connect to the network."
+        rescue Errno::ETIMEDOUT
+            say "Sorry, The operation timed out."
         end
         request_completed
     end
     
-    listen_for /refresh (media center|plex|show) library/i do
-        Net::HTTP.get_response(URI.parse("http://#{@plex_ip}/library/sections/#{@plex_key}/refresh"))
-        say "Plex is being updated."
+    listen_for /refresh my (media center|plex|show) library/i do
+        begin
+            Net::HTTP.get_response(URI.parse("http://#{@plex_ip}/library/sections/#{@plex_key}/refresh"))
+            say "Plex is being updated."
+        rescue Errno::EHOSTUNREACH
+            say "Sorry, I could not connect to Plex Media Server."
+        rescue Errno::ECONNREFUSED
+            say "Sorry, Plex Media Servier is nut running."
+        rescue Errno::ENETUNREACH
+            say "Sorry, Could not connect to the network."
+        rescue Errno::ETIMEDOUT
+            say "Sorry, The operation timed out."
+        end
         request_completed
     end
 
     def sickbeardParser(cmd)
         
-        base_url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd="
-        url = "#{base_url}#{cmd}"
+        url = "http://#{@host}:#{@port}/api/#{@api_key}/?cmd=#{cmd}"
         resp = Net::HTTP.get_response(URI.parse(url))
         data = resp.body
         
