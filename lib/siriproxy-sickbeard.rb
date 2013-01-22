@@ -160,7 +160,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
     end
     
     listen_for /refresh (media center|plex|show) library/i do
-        Net::HTTP.get_response(URI.parse("http://#{plex_ip}/library/sections/#{plex_key}/refresh"))
+        Net::HTTP.get_response(URI.parse("http://#{@plex_ip}/library/sections/#{@plex_key}/refresh"))
         say "Plex is being updated."
         request_completed
     end
