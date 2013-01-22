@@ -9,3 +9,5 @@
       sickbeard_host: '127.0.0.1' # IP of SickBeard Server
       sickbeard_port: '8081' # Port SickBeard runs on
       sickbeard_api: '' # SickBeard API Key, found at Config > General > API
+      plex_ip_port: 'localhost:32400' # IP:Port of PMS, 32400 is default port for Plex
+      plex_key: '1' # The key of shows section in PMS. To find go to http://ip.of.plex.server:port/sections

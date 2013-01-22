@@ -15,6 +15,8 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         @host = config["sickbeard_host"]
         @port = config["sickbeard_port"]
         @api_key = config["sickbeard_api"]
+        @plex_ip = config["plex_ip_port"]
+        @plex_key = config["plex_key"]
     end
     
     listen_for /test (sick beard|my show|my shows) server/i do
@@ -144,7 +146,7 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
         request_completed
     end
     
-    listen_for /what shows did (i recently|i) get/i do
+    listen_for /what shows did (i recently|i) (get|get recently)/i do
         
         shows = sickbeardParser("history&limit=3&type=downloaded")["data"]
         if shows == []
@@ -154,6 +156,11 @@ class SiriProxy::Plugin::SickBeard < SiriProxy::Plugin
                 say "#{i['show_name']} season #{i['season']} episode #{i['episode']}"
             end
         end
+        request_completed
+    end
+    
+    listen_for /refresh (media center|plex|show) library/i do
+        Net::HTTP.get_response(URI.parse("http://#{plex_ip}/library/sections/#{plex_key}/refresh")
         request_completed
     end
 

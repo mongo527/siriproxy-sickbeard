@@ -42,8 +42,10 @@ Voice Commands
 + what is on tonight
 + what is on this week
 + what shows did i get
++ refresh plex library OR refresh media center library
 
 + In my experience Siri has a problem when I say Sick Beard. So I instead say my shows.
++ Siri also has a problem with Plex, so media center or show is also accepted.
 
 Notes
 --
